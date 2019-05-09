@@ -1,3 +1,4 @@
+#import library
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import datasets
@@ -5,18 +6,31 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
-np.random.seed(0)
-n_pts = 500
-X, y = datasets.make_circles(n_samples=n_pts, random_state = 123, noise=0.1, factor=0.2)
-print(X)
-print(y)
 
+np.random.seed(0)
+#num of points
+n_pts = 500
+#labels, middle is 1 outside is 0, random state keeps same chart, noise is deviation,
+#factor is the diameter of the inner circle vs outer
+X, y = datasets.make_circles(n_samples=n_pts, random_state=123, noise=0.1, factor=0.2)
+
+#displays point
 plt.scatter(X[y==0, 0], X[y==0, 1])
 plt.scatter(X[y==1, 0], X[y==1, 1])
+
+#creates a sequential neural net
 model = Sequential()
-model.add(Dense(4, input_shape=(2,), activation='sigmoid'))
-model.add(Dense(1, activation='sigmoid'))
-model.compile(Adam(lr = 0.01), 'binary_crossentropy', metrics=['accuracy'])
+#creates a dense hidden layer with 4 nodes and 2 inputs
+model.add(Dense(4, input_shape=(2,), activation="sigmoid"))
+#adds output layer,
+model.add(Dense(1, activation="sigmoid"))
+#metrics are very similar loss function, except they're not backpropegated, their used as
+#ways to measure the algorithem
+model.compile(Adam(lr=0.01), "binary_crossentropy", metrics=["accuracy"])
+#batch size is how many times it backpropregates.
+#epoch is # of times model runs through data
+h = model.fit(x=X, y=y, verbose=1, batch_size=20, epochs=100, shuffle="true")
+
 plt.plot(h.history['acc'])
 plt.legend(['accuracy'])
 plt.ylabel('accuracy')
@@ -34,6 +48,7 @@ def plot_decision_boundary(X, y, model):
     pred_func = model.predict(grid)
     z = pred_func.reshape(xx.shape)
     plt.contourf(xx, yy, z)
+
 plot_decision_boundary(X, y, model)
 plt.scatter(X[y==0, 0], X[y==0, 1])
 plt.scatter(X[y==1, 0], X[y==1, 1])

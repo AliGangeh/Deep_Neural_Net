@@ -14,10 +14,6 @@ n_pts = 500
 #factor is the diameter of the inner circle vs outer
 X, y = datasets.make_circles(n_samples=n_pts, random_state=123, noise=0.1, factor=0.2)
 
-#displays point
-plt.scatter(X[y==0, 0], X[y==0, 1])
-plt.scatter(X[y==1, 0], X[y==1, 1])
-
 #creates a sequential neural net
 model = Sequential()
 #creates a dense hidden layer with 4 nodes and 2 inputs
@@ -31,15 +27,21 @@ model.compile(Adam(lr=0.01), "binary_crossentropy", metrics=["accuracy"])
 #epoch is # of times model runs through data
 h = model.fit(x=X, y=y, verbose=1, batch_size=20, epochs=100, shuffle="true")
 
+#plots the accuracy of the model per epoch
 plt.plot(h.history['acc'])
 plt.legend(['accuracy'])
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
+plt.show()
 
+#plots loss of model per epoch
 plt.plot(h.history['loss'])
 plt.legend(['loss'])
 plt.title('loss')
 plt.xlabel('epoch')
+plt.show()
+
+#creates contours seperating the different data points
 def plot_decision_boundary(X, y, model):
     x_span = np.linspace(min(X[:,0]) - 0.25, max(X[:,0]) + 0.25)
     y_span = np.linspace(min(X[:,1]) - 0.25, max(X[:,1]) + 0.25)
@@ -49,17 +51,14 @@ def plot_decision_boundary(X, y, model):
     z = pred_func.reshape(xx.shape)
     plt.contourf(xx, yy, z)
 
+#plots contours and datapoints. It also adds a new unlabeld point which the model predicts a value
 plot_decision_boundary(X, y, model)
 plt.scatter(X[y==0, 0], X[y==0, 1])
 plt.scatter(X[y==1, 0], X[y==1, 1])
-plot_decision_boundary(X, y, model)
-plt.scatter(X[y==0, 0], X[y==0, 1])
-plt.scatter(X[y==1, 0], X[y==1, 1])
-
 x = 0
 y = 0.75
-
 point = np.array([[x, y]])
 predict = model.predict(point)
 plt.plot([x], [y], marker='o', markersize=10, color="red")
 print("Prediction is: ", predict)
+plt.show()
